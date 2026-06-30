@@ -1,28 +1,6 @@
 from pydantic import BaseModel, Field
-from enum import Enum
 from datetime import datetime
-
-
-class ApplicationStatus(str, Enum):
-    new = "new"
-    in_progress = "in_progress"
-    done = "done"
-
-
-class ApplicationPriority(str, Enum):
-    low = "low"
-    normal = "normal"
-    high = "high"
-
-
-class ApplicationSortBy(str, Enum):
-    CREATED_AT = "created_at"
-    PRIORITY = "priority"
-
-
-class SortOrder(str, Enum):
-    ASC = "asc"
-    DESC = "desc"
+from ..enums import ApplicationStatus, ApplicationPriority
 
 
 class ApplicationBase(BaseModel):
@@ -42,10 +20,7 @@ class ApplicationCreate(ApplicationBase):
 
 
 class ApplicationUpdate(BaseModel):
-    title: str | None = Field(None, min_length=3, max_length=120)
-    description: str | None = Field(None, max_length=1000)
-    status: ApplicationStatus | None = None
-    priority: ApplicationPriority | None = None
+    status: ApplicationStatus
 
 
 class ApplicationResponse(ApplicationBase):

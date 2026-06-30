@@ -1,17 +1,19 @@
 from math import ceil
 from ..repositories import ApplicationRepository
 from ..schemas import (
-    ApplicationPriority,
     ApplicationResponse,
     ApplicationCreate,
-    ApplicationSortBy,
-    ApplicationStatus,
-    SortOrder,
     PaginatedResponse,
+)
+from ..enums.application import (
+    ApplicationStatus,
+    ApplicationPriority,
+    ApplicationSortBy,
+    SortOrder,
 )
 from sqlalchemy.orm import Session
 from typing import Optional
-from fastapi import HTTPException, status
+from fastapi import HTTPException, status as http_status
 
 
 class ApplicationService:
@@ -52,7 +54,7 @@ class ApplicationService:
         application = self.repository.get_by_id(application_id)
         if not application:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
+                status_code=http_status.HTTP_404_NOT_FOUND,
                 detail=f"Application with id {application_id} not found",
             )
 
@@ -63,3 +65,23 @@ class ApplicationService:
     ) -> ApplicationResponse:
         application = self.repository.create(application_data)
         return ApplicationResponse.model_validate(application)
+
+    def update_application_status(
+        self,
+        application_id: int,
+        status: ApplicationStatus,
+    ) -> ApplicationResponse:
+        application = self.repository.get_by_id(application_id)
+
+        if not application:
+            raise HTTPException(
+                status_code=http_status.HTTP_404_NOT_FOUND,
+                detail=f"Application with id {application_id} not found",
+            )
+
+        updated_application = self.repository.update_status(
+            application=application,
+            status=status,
+        )
+
+        return ApplicationResponse.model_validate(updated_application)

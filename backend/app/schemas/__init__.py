@@ -3,9 +3,7 @@ from .application import (
     ApplicationUpdate,
     ApplicationPriority,
     ApplicationResponse,
-    ApplicationSortBy,
     ApplicationStatus,
-    SortOrder,
 )
 from .pagination import PaginatedResponse
 
@@ -15,7 +13,5 @@ __all__ = [
     "ApplicationUpdate",
     "ApplicationResponse",
     "PaginatedResponse",
-    "ApplicationSortBy",
     "ApplicationStatus",
-    "SortOrder",
 ]

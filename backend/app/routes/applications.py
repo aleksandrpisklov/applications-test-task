@@ -1,13 +1,11 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, Query, status
 from ..database import get_db
+from ..enums import ApplicationPriority, ApplicationStatus, ApplicationSortBy, SortOrder
 from ..schemas import (
     ApplicationCreate,
-    ApplicationPriority,
+    ApplicationUpdate,
     ApplicationResponse,
-    ApplicationSortBy,
-    ApplicationStatus,
-    SortOrder,
     PaginatedResponse,
 )
 from sqlalchemy.orm import Session
@@ -59,3 +57,21 @@ def create_application(
 ):
     service = ApplicationService(db)
     return service.create_application(application_data)
+
+
+@router.patch(
+    "/{application_id}",
+    response_model=ApplicationResponse,
+    status_code=status.HTTP_200_OK,
+)
+def update_application_status(
+    application_id: int,
+    status_data: ApplicationUpdate,
+    db: Session = Depends(get_db),
+):
+    service = ApplicationService(db)
+
+    return service.update_application_status(
+        application_id=application_id,
+        status=status_data.status,
+    )

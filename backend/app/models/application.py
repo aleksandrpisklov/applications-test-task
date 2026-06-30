@@ -1,19 +1,7 @@
-import enum
 from sqlalchemy import String, Text, Enum, DateTime, func
 from sqlalchemy.orm import Mapped, mapped_column
 from ..database import Base
-
-
-class ApplicationStatus(str, enum.Enum):
-    new = "new"
-    in_progress = "in_progress"
-    done = "done"
-
-
-class ApplicationPriority(str, enum.Enum):
-    low = "low"
-    normal = "normal"
-    high = "high"
+from ..enums.application import ApplicationStatus, ApplicationPriority
 
 
 class Application(Base):

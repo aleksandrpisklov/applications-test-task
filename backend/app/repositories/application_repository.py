@@ -2,11 +2,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc, case, or_
 from typing import List, Optional
 from ..models import Application
-from ..schemas import (
-    ApplicationCreate,
+from ..schemas import ApplicationCreate
+from ..enums.application import (
+    ApplicationStatus,
     ApplicationPriority,
     ApplicationSortBy,
-    ApplicationStatus,
     SortOrder,
 )
 
@@ -75,3 +75,15 @@ class ApplicationRepository:
         self.db.commit()
         self.db.refresh(db_application)
         return db_application
+
+    def update_status(
+        self,
+        application: Application,
+        status: ApplicationStatus,
+    ) -> Application:
+        application.status = status
+
+        self.db.commit()
+        self.db.refresh(application)
+
+        return application

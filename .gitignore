@@ -4,3 +4,4 @@ env/
 venv/
 __pycache__
 applications.db
+.ruff_cache
