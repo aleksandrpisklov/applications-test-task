@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import asc, desc, case, or_
 from typing import List, Optional
-from ..models.application import Application
-from ..schemas.application import (
+from ..models import Application
+from ..schemas import (
     ApplicationCreate,
     ApplicationPriority,
     ApplicationSortBy,
@@ -22,7 +22,9 @@ class ApplicationRepository:
         search: Optional[str] = None,
         sort_by: ApplicationSortBy = ApplicationSortBy.CREATED_AT,
         sort_order: SortOrder = SortOrder.DESC,
-    ) -> List[Application]:
+        page: int = 1,
+        size: int = 10,
+    ) -> tuple[List[Application], int]:
         query = self.db.query(Application)
 
         if status is not None:
@@ -40,6 +42,8 @@ class ApplicationRepository:
                 )
             )
 
+        total = query.count()
+
         if sort_by == ApplicationSortBy.PRIORITY:
             sort_column = case(
                 {
@@ -55,7 +59,10 @@ class ApplicationRepository:
         order_func = asc if sort_order == SortOrder.ASC else desc
         query = query.order_by(order_func(sort_column))
 
-        return query.all()
+        offset = (page - 1) * size
+        query = query.offset(offset).limit(size)
+
+        return query.all(), total
 
     def get_by_id(self, application_id: int) -> Optional[Application]:
         return (

@@ -1,14 +1,16 @@
-from ..repositories.application_repository import ApplicationRepository
-from ..schemas.application import (
+from math import ceil
+from ..repositories import ApplicationRepository
+from ..schemas import (
     ApplicationPriority,
     ApplicationResponse,
     ApplicationCreate,
     ApplicationSortBy,
     ApplicationStatus,
     SortOrder,
+    PaginatedResponse,
 )
 from sqlalchemy.orm import Session
-from typing import List, Optional
+from typing import Optional
 from fastapi import HTTPException, status
 
 
@@ -23,19 +25,28 @@ class ApplicationService:
         search: Optional[str] = None,
         sort_by: ApplicationSortBy = ApplicationSortBy.CREATED_AT,
         sort_order: SortOrder = SortOrder.DESC,
-    ) -> List[ApplicationResponse]:
-        applications = self.repository.get_all(
+        page: int = 1,
+        size: int = 10,
+    ) -> PaginatedResponse[ApplicationResponse]:
+        applications, total = self.repository.get_all(
             status=status,
             priority=priority,
             search=search,
             sort_by=sort_by,
             sort_order=sort_order,
+            page=page,
+            size=size,
         )
 
-        return [
-            ApplicationResponse.model_validate(application)
-            for application in applications
-        ]
+        pages = ceil(total / size) if total > 0 else 0
+
+        return PaginatedResponse(
+            items=[ApplicationResponse.model_validate(app) for app in applications],
+            total=total,
+            page=page,
+            size=size,
+            pages=pages,
+        )
 
     def get_application_by_id(self, application_id: int) -> ApplicationResponse:
         application = self.repository.get_by_id(application_id)

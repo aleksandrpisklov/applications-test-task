@@ -1,13 +1,14 @@
-from typing import List, Optional
+from typing import Optional
 from fastapi import APIRouter, Depends, Query, status
 from ..database import get_db
-from ..schemas.application import (
+from ..schemas import (
     ApplicationCreate,
     ApplicationPriority,
     ApplicationResponse,
     ApplicationSortBy,
     ApplicationStatus,
     SortOrder,
+    PaginatedResponse,
 )
 from sqlalchemy.orm import Session
 from ..services.application_service import ApplicationService
@@ -16,7 +17,9 @@ router = APIRouter(prefix="/api/applications", tags=["applications"])
 
 
 @router.get(
-    "", response_model=List[ApplicationResponse], status_code=status.HTTP_200_OK
+    "",
+    response_model=PaginatedResponse[ApplicationResponse],
+    status_code=status.HTTP_200_OK,
 )
 def get_applications(
     status: Optional[ApplicationStatus] = Query(None),
@@ -24,6 +27,8 @@ def get_applications(
     search: Optional[str] = Query(None),
     sort_by: ApplicationSortBy = Query(ApplicationSortBy.CREATED_AT),
     sort_order: SortOrder = Query(SortOrder.DESC),
+    page: int = 1,
+    size: int = 10,
     db: Session = Depends(get_db),
 ):
     service = ApplicationService(db)
@@ -33,6 +38,8 @@ def get_applications(
         search=search,
         sort_by=sort_by,
         sort_order=sort_order,
+        page=page,
+        size=size,
     )
 
 
