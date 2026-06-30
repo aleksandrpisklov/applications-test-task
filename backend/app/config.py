@@ -18,6 +18,10 @@ class Settings(BaseSettings):
     static_dir: str = "static"
     images_dir: str = "static/images"
 
+    JWT_SECRET_KEY: str
+    JWT_ACCESS_COOKIE_NAME: str
+    JWT_COOKIE_CSRF_PROTECT: bool = False
+
     class Config:
         env_file = ".env"
 

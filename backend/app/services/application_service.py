@@ -85,3 +85,14 @@ class ApplicationService:
         )
 
         return ApplicationResponse.model_validate(updated_application)
+
+    def delete_application(self, application_id: int) -> None:
+        application = self.repository.get_by_id(application_id)
+
+        if not application:
+            raise HTTPException(
+                status_code=http_status.HTTP_404_NOT_FOUND,
+                detail=f"Application with id {application_id} not found",
+            )
+
+        self.repository.delete(application)

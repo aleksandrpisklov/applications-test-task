@@ -87,3 +87,7 @@ class ApplicationRepository:
         self.db.refresh(application)
 
         return application
+
+    def delete(self, application: Application) -> None:
+        self.db.delete(application)
+        self.db.commit()

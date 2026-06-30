@@ -10,6 +10,7 @@ from ..schemas import (
 )
 from sqlalchemy.orm import Session
 from ..services.application_service import ApplicationService
+from ..security import security
 
 router = APIRouter(prefix="/api/applications", tags=["applications"])
 
@@ -75,3 +76,17 @@ def update_application_status(
         application_id=application_id,
         status=status_data.status,
     )
+
+
+@router.delete(
+    "/{application_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    dependencies=[Depends(security.access_token_required)],
+)
+def delete_application(
+    application_id: int,
+    db: Session = Depends(get_db),
+):
+    service = ApplicationService(db)
+    service.delete_application(application_id)
+    return None
