@@ -1,4 +1,5 @@
-import axios from "axios";
+import axios, { type AxiosRequestConfig } from "axios";
+import qs from "qs";
 
 export const baseURL = "http://localhost:8000/";
 
@@ -15,3 +16,16 @@ apiInstance.interceptors.request.use((config) => {
   config.headers.Authorization = authorizationToken;
   return config;
 });
+
+export const createInstance = <T>(
+  config: AxiosRequestConfig,
+  options?: AxiosRequestConfig,
+): Promise<T> => {
+  return apiInstance({
+    ...config,
+    ...options,
+    paramsSerializer: {
+      serialize: (params) => qs.stringify(params, { arrayFormat: "repeat" }),
+    },
+  }).then((results) => results.data);
+};

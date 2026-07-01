@@ -1,11 +1,11 @@
-import { useHealthCheck } from "./hooks/use-health-check";
+import { useApplications } from "./hooks/use-applications";
 
 function App() {
-  const { data: status } = useHealthCheck();
+  const { data } = useApplications();
 
   return (
     <>
-      <h1 className="font-bold"> Status from API: {status} </h1>
+      <h1 className="font-bold"> Applications count: {data?.total} </h1>
     </>
   );
 }
