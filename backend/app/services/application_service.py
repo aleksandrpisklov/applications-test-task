@@ -79,6 +79,12 @@ class ApplicationService:
                 detail=f"Application with id {application_id} not found",
             )
 
+        if application.status == ApplicationStatus.done:
+            raise HTTPException(
+                status_code=http_status.HTTP_400_BAD_REQUEST,
+                detail="Done application cannot be updated",
+            )
+
         updated_application = self.repository.update_status(
             application=application,
             status=status,
@@ -93,6 +99,12 @@ class ApplicationService:
             raise HTTPException(
                 status_code=http_status.HTTP_404_NOT_FOUND,
                 detail=f"Application with id {application_id} not found",
+            )
+        
+        if application.status == ApplicationStatus.done:
+            raise HTTPException(
+                status_code=http_status.HTTP_400_BAD_REQUEST,
+                detail="Done application cannot be deleted",
             )
 
         self.repository.delete(application)
