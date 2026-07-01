@@ -10,22 +10,14 @@ import { LoadingSkeleton } from "./components/loading-skeleton";
 import { EmptyState } from "./components/empty-state";
 import { useSort } from "./hooks/use-sort";
 import { Table } from "./components/table";
-import { useDelete } from "./hooks/use-delete";
+import { useDeleteApplication } from "./hooks/use-delete-application";
 import { useUpdateStatus } from "./hooks/use-update-status";
-import { filterAndSortApplications } from "./lib/filter-and-sort-applications";
-import { useMockApplications } from "./hooks/use-mock-applications";
 import { useToast } from "./hooks/use-toast";
-import { useCreate } from "./hooks/use-create";
+import { useCreateApplication } from "./hooks/use-create-application";
+import { useApplications } from "./hooks/use-applications";
+import { getErrorMessage } from "./lib/get-error-message";
 
 export function App() {
-  const {
-    applications,
-    setApplications,
-    loading,
-    apiError,
-    fetchApplications,
-  } = useMockApplications();
-
   const {
     search,
     filterStatus,
@@ -37,45 +29,32 @@ export function App() {
 
   const { sort, handleSort } = useSort();
 
+  const { applications, total, error, reloadApplications, isLoading, isError } =
+    useApplications({
+      search,
+      status: filterStatus,
+      priority: filterPriority,
+      sortField: sort.field,
+      sortOrder: sort.order,
+    });
+
   const { toastMsg, toast } = useToast();
 
-  const { showCreate, setShowCreate, handleCreate } = useCreate({
-    onCreate: (application) => {
-      setApplications((prev) => [application, ...prev]);
-      toast("Заявка создана");
-    },
-  });
-
-  const { deletingId, handleDelete } = useDelete({
-    onDelete: (id) => {
-      setApplications((prev) =>
-        prev.filter((application) => application.id !== id),
-      );
-      toast("Заявка удалена");
-    },
-    onError: (message) => toast(`Ошибка: ${message}`),
-  });
-
-  const { updatingId, handleStatusChange } = useUpdateStatus({
-    onUpdate: (id, updated, status) => {
-      console.log({ id, updated, status });
-
-      setApplications((prev) =>
-        prev.map((application) =>
-          application.id === id ? updated : application,
-        ),
-      );
-      toast(`Статус обновлён → ${STATUS_LABELS[status]}`);
-    },
+  const { showCreate, setShowCreate, handleCreate } = useCreateApplication({
+    onSuccess: () => toast("Заявка создана"),
     onError: (message) => toast(message),
   });
 
-  const displayed = filterAndSortApplications({
-    applications,
-    filterStatus,
-    filterPriority,
-    search,
-    sort,
+  const { deletingId, handleDelete } = useDeleteApplication({
+    onSuccess: (id) => toast(`Заявка №${id} удалена`),
+    onError: (message) => toast(message),
+  });
+
+  const { updatingId, handleStatusChange } = useUpdateStatus({
+    onSuccess: (id, status) => {
+      toast(`Статус заявки №${id} обновлён → ${STATUS_LABELS[status]}`);
+    },
+    onError: (message) => toast(message),
   });
 
   const hasFilters =
@@ -104,38 +83,28 @@ export function App() {
           setFilterStatus={setFilterStatus}
           setShowCreate={setShowCreate}
           hasFilters={hasFilters}
-          onFetch={fetchApplications}
+          onFetch={reloadApplications}
         />
 
         <Count
-          isLoading={loading}
-          isError={!!apiError}
-          count={displayed.length}
-          total={applications.length}
+          isLoading={isLoading}
+          isError={isError}
+          count={applications?.length ?? 0}
+          total={total ?? 0}
         />
 
         <div className="border-border bg-card overflow-hidden rounded-xl border">
-          {apiError && !loading && (
-            <FetchingError error={apiError} onReload={fetchApplications} />
-          )}
-
-          {loading && <LoadingSkeleton />}
-
-          {!loading && !apiError && displayed.length === 0 && (
-            <EmptyState
-              hasFilters={!!hasFilters}
-              onReset={() => {
-                setSearch("");
-                setFilterStatus("all");
-                setFilterPriority("all");
-              }}
+          {isError ? (
+            <FetchingError
+              error={getErrorMessage(error)}
+              onReload={reloadApplications}
             />
-          )}
-
-          {!loading && !apiError && displayed.length > 0 && (
+          ) : isLoading ? (
+            <LoadingSkeleton />
+          ) : applications?.length ? (
             <div className="overflow-x-auto">
               <Table
-                applications={displayed}
+                applications={applications}
                 sort={sort}
                 onSort={handleSort}
                 onDelete={handleDelete}
@@ -144,6 +113,15 @@ export function App() {
                 updatingId={updatingId}
               />
             </div>
+          ) : (
+            <EmptyState
+              hasFilters={!!hasFilters}
+              onReset={() => {
+                setSearch("");
+                setFilterStatus("all");
+                setFilterPriority("all");
+              }}
+            />
           )}
         </div>
       </main>

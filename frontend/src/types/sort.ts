@@ -1,9 +1,8 @@
-export type SortDir = "asc" | "desc";
+export type SortOrder = "asc" | "desc";
 
-export type SortField =
-  "id" | "title" | "status" | "priority" | "created_at" | "updated_at";
+export type SortField = "priority" | "created_at";
 
 export type Sort = {
   field: SortField;
-  dir: SortDir;
+  order: SortOrder;
 };

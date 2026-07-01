@@ -5,7 +5,7 @@ export function getErrorMessage(
   fallback = "Произошла неизвестная ошибка, попробуйте позже",
 ) {
   if (error instanceof AxiosError) {
-    return error.response?.data?.message || fallback;
+    return error.response?.data?.detail || fallback;
   }
   return fallback;
 }

@@ -1,6 +1,11 @@
-import { Loader2, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronsUpDown,
+  ChevronUp,
+  Loader2,
+  Trash2,
+} from "lucide-react";
 import type { Sort, SortField } from "../types/sort";
-import { SortBtn } from "./sort-btn";
 import { StatusSelect } from "./status-select";
 import { PRIORITY_STYLE } from "../constants/priority-style";
 import { PRIORITY_LABELS } from "../constants/priority-labels";
@@ -8,6 +13,45 @@ import { formatDate } from "../lib/format-date";
 import type { Application } from "../types/application";
 import type { Status } from "../types/status";
 import { Badge } from "../ui/badge";
+
+export function ColumnHeader({
+  field,
+  label,
+  sort,
+  onSort,
+}: {
+  field?: SortField;
+  label: string;
+  sort?: Sort;
+  onSort?: () => void;
+}) {
+  const sortable = sort && onSort && field;
+  const active = sortable && sort?.field === field;
+
+  if (!sortable) {
+    return (
+      <div className="text-muted-foreground text-xs font-medium"> {label} </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={onSort}
+      className={`flex items-center gap-1 text-xs font-medium transition select-none ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+    >
+      {label}
+      {active ? (
+        sort?.order === "asc" ? (
+          <ChevronUp className="h-3 w-3" />
+        ) : (
+          <ChevronDown className="h-3 w-3" />
+        )
+      ) : (
+        <ChevronsUpDown className="h-3 w-3 opacity-40" />
+      )}
+    </button>
+  );
+}
 
 function TableHeader({
   sort,
@@ -20,34 +64,29 @@ function TableHeader({
     <thead>
       <tr className="border-border bg-muted/30 border-b">
         <th className="w-[38%] px-5 py-3 text-left">
-          <SortBtn field="title" label="Заявка" sort={sort} onSort={onSort} />
+          <ColumnHeader label="Заявка" />
         </th>
         <th className="px-3 py-3 text-left">
-          <SortBtn field="status" label="Статус" sort={sort} onSort={onSort} />
+          <ColumnHeader label="Статус" />
         </th>
         <th className="px-3 py-3 text-left">
-          <SortBtn
+          <ColumnHeader
             field="priority"
             label="Приоритет"
             sort={sort}
-            onSort={onSort}
+            onSort={() => onSort("priority")}
           />
         </th>
         <th className="hidden px-3 py-3 text-left md:table-cell">
-          <SortBtn
+          <ColumnHeader
             field="created_at"
             label="Создана"
             sort={sort}
-            onSort={onSort}
+            onSort={() => onSort("created_at")}
           />
         </th>
         <th className="hidden px-3 py-3 text-left lg:table-cell">
-          <SortBtn
-            field="updated_at"
-            label="Изменена"
-            sort={sort}
-            onSort={onSort}
-          />
+          <ColumnHeader label="Изменена" />
         </th>
         <th className="w-11 px-3 py-3" />
       </tr>
