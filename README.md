@@ -43,7 +43,7 @@ docker compose down
 Если нужно полностью пересобрать контейнеры:
 
 ```bash
-docker compose up --build --force-recreate --no-cache
+docker compose up --build --force-recreate
 ```
 
 ## Run without Docker
