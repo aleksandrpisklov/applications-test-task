@@ -24,6 +24,8 @@ docker compose up --build
 - Backend: `http://localhost:8000`
 - API docs: `http://localhost:8000/api/docs`
 
+При первом старте backend автоматически выполнит seed и заполнит базу тестовыми данными.
+
 ---
 
 ## Stop containers
@@ -87,6 +89,12 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 ```bash
 pip install -r requirements.txt
+```
+
+Если нужно заполнить базу вручную без Docker, выполните:
+
+```bash
+python seed_data.py
 ```
 
 Запустите backend:
