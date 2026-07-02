@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Response
+from fastapi import APIRouter, HTTPException, Response, status
 from app.schemas.user import UserLoginSchema
 from ..security import security, config
 
@@ -12,4 +12,7 @@ def login(creds: UserLoginSchema, response: Response):
         response.set_cookie(config.JWT_ACCESS_COOKIE_NAME, token)
         return {"access_token": token}
 
-    return HTTPException(status_code=401, detail="Incorrect username or password")
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Неверный логин или пароль",
+    )

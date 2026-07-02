@@ -55,7 +55,7 @@ class ApplicationService:
         if not application:
             raise HTTPException(
                 status_code=http_status.HTTP_404_NOT_FOUND,
-                detail=f"Application with id {application_id} not found",
+                detail=f"Заявка с id {application_id} не найдена",
             )
 
         return ApplicationResponse.model_validate(application)
@@ -76,13 +76,13 @@ class ApplicationService:
         if not application:
             raise HTTPException(
                 status_code=http_status.HTTP_404_NOT_FOUND,
-                detail=f"Application with id {application_id} not found",
+                detail=f"Заявка с id {application_id} не найдена",
             )
 
         if application.status == ApplicationStatus.done:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
-                detail="Done application cannot be updated",
+                detail="Завершённую заявку нельзя обновлять",
             )
 
         updated_application = self.repository.update_status(
@@ -98,13 +98,13 @@ class ApplicationService:
         if not application:
             raise HTTPException(
                 status_code=http_status.HTTP_404_NOT_FOUND,
-                detail=f"Application with id {application_id} not found",
+                detail=f"Заявка с id {application_id} не найдена",
             )
-        
+
         if application.status == ApplicationStatus.done:
             raise HTTPException(
                 status_code=http_status.HTTP_400_BAD_REQUEST,
-                detail="Done application cannot be deleted",
+                detail="Завершённую заявку нельзя удалить",
             )
 
         self.repository.delete(application)
