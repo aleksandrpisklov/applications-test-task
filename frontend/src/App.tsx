@@ -17,6 +17,7 @@ import { useUpdateStatus } from "./hooks/use-update-status";
 import { useToast } from "./hooks/use-toast";
 import { useCreateApplication } from "./hooks/use-create-application";
 import { useApplications } from "./hooks/use-applications";
+import { useDebounce } from "./hooks/use-debounce";
 import { usePagination } from "./hooks/use-pagination";
 import { getErrorMessage } from "./lib/get-error-message";
 
@@ -32,6 +33,7 @@ export function App() {
 
   const { sort, handleSort } = useSort();
 
+  const debouncedSearch = useDebounce(search, 400);
   const { page, setPage, perPage, setPerPage } = usePagination();
 
   const {
@@ -43,7 +45,7 @@ export function App() {
     isLoading,
     isError,
   } = useApplications({
-    search,
+    search: debouncedSearch,
     status: filterStatus,
     priority: filterPriority,
     sortField: sort.field,
