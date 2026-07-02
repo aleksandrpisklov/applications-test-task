@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cn } from "../lib/cn";
 
 export function Badge({
   className,
@@ -9,7 +10,10 @@ export function Badge({
 }) {
   return (
     <span
-      className={`inline-flex items-center rounded px-2 py-0.5 font-mono text-xs font-medium tracking-wide ${className}`}
+      className={cn(
+        "inline-flex items-center rounded px-2 py-0.5 font-mono text-xs font-medium tracking-wide",
+        className,
+      )}
     >
       {children}
     </span>

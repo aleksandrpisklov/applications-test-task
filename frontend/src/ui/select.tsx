@@ -1,4 +1,5 @@
 import { ChevronDown } from "lucide-react";
+import { cn } from "../lib/cn";
 
 type SelectFilterProps<T extends string> = {
   value: T | "all";
@@ -20,7 +21,10 @@ export const Select = <T extends string>({
       <select
         value={value}
         onChange={(e) => onChange(e.target.value as T | "all")}
-        className={`bg-input-background border-border text-foreground focus:ring-primary/50 w-full appearance-none rounded-lg border py-2 pr-10 pl-3 text-sm transition focus:ring-2 focus:outline-none ${className}`}
+        className={cn(
+          "bg-input-background border-border text-foreground focus:ring-primary/50 w-full appearance-none rounded-lg border py-2 pr-10 pl-3 text-sm transition focus:ring-2 focus:outline-none",
+          className,
+        )}
       >
         {allLabel && <option value="all">{allLabel}</option>}
 

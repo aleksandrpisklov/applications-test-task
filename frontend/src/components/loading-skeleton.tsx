@@ -1,9 +1,14 @@
+import { cn } from "../lib/cn";
+
 export function LoadingSkeleton() {
   return (
     <div className="divide-border divide-y">
       <div className="grid grid-cols-[2fr_1fr_1fr_1fr_1fr_44px] items-center gap-4 px-5 py-3">
-        {["w-12", "w-16", "w-14", "w-14", "w-20"].map((w, i) => (
-          <div key={i} className={`h-3 ${w} bg-muted animate-pulse rounded`} />
+        {["w-12", "w-16", "w-14", "w-14", "w-20"].map((width, index) => (
+          <div
+            key={index}
+            className={cn("bg-muted h-3 animate-pulse rounded", width)}
+          />
         ))}
         <div />
       </div>

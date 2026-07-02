@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { CreateModal } from "./components/create-modal";
 import { STATUS_LABELS } from "./constants/status-labels";
 import { Toast } from "./ui/toast";
@@ -10,11 +11,13 @@ import { LoadingSkeleton } from "./components/loading-skeleton";
 import { EmptyState } from "./components/empty-state";
 import { useSort } from "./hooks/use-sort";
 import { Table } from "./components/table";
+import { PaginationFooter } from "./components/pagination-footer";
 import { useDeleteApplication } from "./hooks/use-delete-application";
 import { useUpdateStatus } from "./hooks/use-update-status";
 import { useToast } from "./hooks/use-toast";
 import { useCreateApplication } from "./hooks/use-create-application";
 import { useApplications } from "./hooks/use-applications";
+import { usePagination } from "./hooks/use-pagination";
 import { getErrorMessage } from "./lib/get-error-message";
 
 export function App() {
@@ -29,14 +32,30 @@ export function App() {
 
   const { sort, handleSort } = useSort();
 
-  const { applications, total, error, reloadApplications, isLoading, isError } =
-    useApplications({
-      search,
-      status: filterStatus,
-      priority: filterPriority,
-      sortField: sort.field,
-      sortOrder: sort.order,
-    });
+  const { page, setPage, perPage, setPerPage } = usePagination();
+
+  const {
+    applications,
+    total,
+    totalPages,
+    error,
+    reloadApplications,
+    isLoading,
+    isError,
+  } = useApplications({
+    search,
+    status: filterStatus,
+    priority: filterPriority,
+    sortField: sort.field,
+    sortOrder: sort.order,
+    page,
+    size: perPage,
+  });
+
+  useEffect(() => {
+    setPage(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search, filterStatus, filterPriority, sort.field, sort.order]);
 
   const { toastMsg, toast } = useToast();
 
@@ -102,21 +121,33 @@ export function App() {
           ) : isLoading ? (
             <LoadingSkeleton />
           ) : applications?.length ? (
-            <div className="overflow-x-auto">
-              <Table
-                applications={applications}
-                sort={sort}
-                onSort={handleSort}
-                onDelete={handleDelete}
-                onChange={handleStatusChange}
-                deletingId={deletingId}
-                updatingId={updatingId}
+            <>
+              <div className="overflow-x-auto">
+                <Table
+                  applications={applications}
+                  sort={sort}
+                  onSort={handleSort}
+                  onDelete={handleDelete}
+                  onChange={handleStatusChange}
+                  deletingId={deletingId}
+                  updatingId={updatingId}
+                />
+              </div>
+
+              <PaginationFooter
+                page={page}
+                perPage={perPage}
+                totalPages={totalPages}
+                totalItems={total ?? 0}
+                onPageChange={setPage}
+                onPerPageChange={setPerPage}
               />
-            </div>
+            </>
           ) : (
             <EmptyState
               hasFilters={!!hasFilters}
               onReset={() => {
+                setPage(1);
                 setSearch("");
                 setFilterStatus("all");
                 setFilterPriority("all");

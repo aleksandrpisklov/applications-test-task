@@ -13,6 +13,7 @@ import { formatDate } from "../lib/format-date";
 import type { Application } from "../types/application";
 import type { Status } from "../types/status";
 import { Badge } from "../ui/badge";
+import { cn } from "../lib/cn";
 
 export function ColumnHeader({
   field,
@@ -37,7 +38,10 @@ export function ColumnHeader({
   return (
     <button
       onClick={onSort}
-      className={`flex items-center gap-1 text-xs font-medium transition select-none ${active ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}
+      className={cn(
+        "flex items-center gap-1 text-xs font-medium transition select-none",
+        active ? "text-primary" : "text-muted-foreground hover:text-foreground",
+      )}
     >
       {label}
       {active ? (
@@ -112,7 +116,12 @@ function TableBody({
       {applications.map((application) => (
         <tr
           key={application.id}
-          className={`group hover:bg-secondary/40 transition-colors ${updatingId === application.id || deletingId === application.id ? "pointer-events-none opacity-50" : ""}`}
+          className={cn(
+            "group hover:bg-secondary/40 transition-colors",
+            updatingId === application.id || deletingId === application.id
+              ? "pointer-events-none opacity-50"
+              : "",
+          )}
         >
           {/* Title + ID */}
           <td className="px-5 py-4">

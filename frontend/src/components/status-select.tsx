@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Status } from "../types/status";
 import { STATUS_LABELS } from "../constants/status-labels";
 import { STATUS_STYLE } from "../constants/status-style";
+import { cn } from "../lib/cn";
 
 export function StatusSelect({
   id,
@@ -28,7 +29,10 @@ export function StatusSelect({
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className={`inline-flex cursor-pointer items-center rounded px-2 py-0.5 font-mono text-xs font-medium tracking-wide transition hover:opacity-80 ${STATUS_STYLE[status]}`}
+        className={cn(
+          "inline-flex cursor-pointer items-center rounded px-2 py-0.5 font-mono text-xs font-medium tracking-wide transition hover:opacity-80",
+          STATUS_STYLE[status],
+        )}
       >
         {STATUS_LABELS[status]}
       </button>
@@ -41,10 +45,16 @@ export function StatusSelect({
                 onChange(id, s);
                 setOpen(false);
               }}
-              className={`w-full px-3 py-2 text-left font-mono text-xs transition ${s === status ? "bg-secondary" : "hover:bg-secondary"}`}
+              className={cn(
+                "w-full px-3 py-2 text-left font-mono text-xs transition",
+                s === status ? "bg-secondary" : "hover:bg-secondary",
+              )}
             >
               <span
-                className={`inline-flex items-center rounded px-1.5 py-0.5 ${STATUS_STYLE[s]}`}
+                className={cn(
+                  "inline-flex items-center rounded px-1.5 py-0.5",
+                  STATUS_STYLE[s],
+                )}
               >
                 {STATUS_LABELS[s]}
               </span>

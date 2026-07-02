@@ -10,6 +10,7 @@ import {
   TITLE_MAX_LENGTH,
 } from "../constants/create-application-limit";
 import { Select } from "../ui/select";
+import { cn } from "../lib/cn";
 
 export function CreateModal({
   onClose,
@@ -59,7 +60,10 @@ export function CreateModal({
                 Название *
               </label>
               <span
-                className={`font-mono text-xs ${titleErr ? "text-destructive" : "text-muted-foreground/50"}`}
+                className={cn(
+                  "font-mono text-xs",
+                  titleErr ? "text-destructive" : "text-muted-foreground/50",
+                )}
               >
                 {title.length}/{TITLE_MAX_LENGTH}
               </span>
@@ -67,7 +71,12 @@ export function CreateModal({
             <input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className={`bg-input-background text-foreground focus:ring-primary/50 w-full rounded-lg border px-3 py-2.5 text-sm transition focus:ring-2 focus:outline-none ${titleErr ? "border-destructive/60" : "border-border focus:border-primary/60"}`}
+              className={cn(
+                "bg-input-background text-foreground focus:ring-primary/50 w-full rounded-lg border px-3 py-2.5 text-sm transition focus:ring-2 focus:outline-none",
+                titleErr
+                  ? "border-destructive/60"
+                  : "border-border focus:border-primary/60",
+              )}
               placeholder="Кратко опишите проблему"
               maxLength={TITLE_MAX_LENGTH}
             />

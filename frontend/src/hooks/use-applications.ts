@@ -42,6 +42,7 @@ export function useApplications({
   return {
     applications: mapApplications(applicationsQuery.data?.items ?? []),
     total: applicationsQuery.data?.total,
+    totalPages: applicationsQuery.data?.pages ?? 1,
     reloadApplications,
     ...applicationsQuery,
   };
