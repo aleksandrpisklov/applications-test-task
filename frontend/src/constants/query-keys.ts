@@ -8,3 +8,7 @@ export const applicationsKey = {
   delete: () => [...applicationsKey.all, "delete"],
   update: () => [...applicationsKey.all, "update"],
 };
+
+export const authKey = {
+  signIn: ["sign-in"] as const,
+};
