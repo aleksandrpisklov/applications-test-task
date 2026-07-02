@@ -1,7 +1,9 @@
 import { useState } from "react";
-import type { Application } from "../types/application";
 import { useMutation } from "@tanstack/react-query";
-import { createApplicationApiApplicationsPost } from "../api/generated";
+import {
+  createApplicationApiApplicationsPost,
+  type ApplicationCreate,
+} from "../api/generated";
 import { queryClient } from "../api/query-client";
 import { applicationsKey } from "../constants/query-keys";
 import { getErrorMessage } from "../lib/get-error-message";
@@ -10,14 +12,14 @@ export function useCreateApplication({
   onSuccess,
   onError,
 }: {
-  onSuccess: (application?: Application) => void;
+  onSuccess: (application?: ApplicationCreate) => void;
   onError: (message: string) => void;
 }) {
   const [showCreate, setShowCreate] = useState(false);
 
   const createApplicationMutation = useMutation({
     mutationKey: applicationsKey.create(),
-    mutationFn: (application: Application) =>
+    mutationFn: (application: ApplicationCreate) =>
       createApplicationApiApplicationsPost(application),
     onSuccess: () => {
       onSuccess();
@@ -28,7 +30,7 @@ export function useCreateApplication({
     },
   });
 
-  const handleCreate = async (application: Application) => {
+  const handleCreate = async (application: ApplicationCreate) => {
     await createApplicationMutation.mutateAsync(application);
     setShowCreate(false);
   };

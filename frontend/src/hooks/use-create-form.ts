@@ -6,14 +6,13 @@ import {
   TITLE_MAX_LENGTH,
   TITLE_MIN_LENGTH,
 } from "../constants/create-application-limit";
-import { mockApi } from "../api/mock-api";
 import { getErrorMessage } from "../lib/get-error-message";
-import type { Application } from "../types/application";
+import type { ApplicationCreate } from "../api/generated";
 
 export function useCreateForm({
   onCreate,
 }: {
-  onCreate: (application: Application) => void;
+  onCreate: (application: ApplicationCreate) => void;
 }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -40,13 +39,12 @@ export function useCreateForm({
     setError("");
     setLoading(true);
     try {
-      const application = await mockApi.create({
+      onCreate({
         title,
         description,
         status,
         priority,
       });
-      onCreate(application);
     } catch (error) {
       setError(getErrorMessage(error));
     } finally {

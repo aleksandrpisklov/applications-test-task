@@ -1,6 +1,6 @@
 import type { Priority } from "../types/priority";
 import type { Status } from "../types/status";
-import type { Application } from "../types/application";
+import type { ApplicationCreate } from "../api/generated";
 import { STATUS_LABELS } from "../constants/status-labels";
 import { PRIORITY_LABELS } from "../constants/priority-labels";
 import { AlertCircle, Loader2, X } from "lucide-react";
@@ -17,7 +17,7 @@ export function CreateModal({
   onCreate,
 }: {
   onClose: () => void;
-  onCreate: (application: Application) => void;
+  onCreate: (application: ApplicationCreate) => void;
 }) {
   const {
     title,
